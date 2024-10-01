@@ -43,6 +43,6 @@ jobs:
           kubectl rollout status deployment/book-catalog-deployment
           kubectl rollout status deployment/inventory-management-deployment
         env:
-          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
+          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
 
 

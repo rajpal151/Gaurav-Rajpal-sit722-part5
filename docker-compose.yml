@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  book_catalog:
+    build:
+      context: ./book_catalog
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://rajpal151_a21w_user:1kDxcMwdwKIvzZHzLG8loIgi25Vj5xgs@dpg-crtlstd2ng1s73c79chg-a.oregon-postgres.render.com/rajpal151_a21w"
+
+  inventory_management:
+    build:
+      context: ./inventory_management
+      dockerfile: Dockerfile 
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://rajpal151_a21w_user:1kDxcMwdwKIvzZHzLG8loIgi25Vj5xgs@dpg-crtlstd2ng1s73c79chg-a.oregon-postgres.render.com/rajpal151_a21w"
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin_otoh_user
+      POSTGRES_PASSWORD: iAALfVKNkxC4wB0vnM0bkqvGFR6uday8
+      POSTGRES_DB: admin_otoh
+    ports:
+      - "5432:5432"

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: book-catalog
-        image: rajpal151.azurecr.io/book-catalog:latest  # Replace with your ACR image URL
+        image: rajpal151.azurecr.io/book_catalog:latest  # Replace with your ACR image URL
         resources:
           limits:
             memory: "128Mi"
@@ -60,7 +60,7 @@ spec:
     spec:
       containers:
       - name: inventory-management
-        image: rajpal151.azurecr.io/inventory-management:latest  # Replace with your ACR image URL
+        image: rajpal151.azurecr.io/inventory_management:latest  # Replace with your ACR image URL
         resources:
           limits:
             memory: "128Mi"

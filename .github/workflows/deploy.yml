@@ -26,16 +26,20 @@ jobs:
           docker build -t rajpal151.azurecr.io/book_catalog:latest ./book_catalog
           docker build -t rajpal151.azurecr.io/inventory_management:latest ./inventory_management
 
-      # Step 7: Push the images to Azure Container Registry (ACR)
+      # Step 7: Push Docker images to Azure Container Registry (ACR)
       - name: Push Docker images to ACR
         run: |
           docker push rajpal151.azurecr.io/book_catalog:latest
           docker push rajpal151.azurecr.io/inventory_management:latest
 
-      # Step 8: Deploy to Azure Kubernetes Service (AKS)
-      - uses: tale/kubectl-action@v1
+      # Step 8: Set up kubectl and deploy to Azure Kubernetes Service (AKS)
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
-          kubectl-version: v1.24.2
-          run: |
-            kubectl apply -f ./scripts/kubernetes/deployment.yml
+          version: v1.24.2
+
+      - name: Deploy to AKS
+        env:
+          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          kubectl apply -f ./scripts/kubernetes/deployment.yml

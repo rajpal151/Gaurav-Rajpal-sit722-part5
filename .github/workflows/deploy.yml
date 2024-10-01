@@ -11,20 +11,6 @@ jobs:
 
     steps:
     
-
-    # Step 2: Set the AKS context
-      - name: Set AKS context
-        uses: azure/aks-set-context@v2
-        with:
-          resource-group: rg1 # Replace with your resource group
-          cluster-name: rajpal151           # Replace with your AKS cluster name
-
-      # Step 3: Verify connection to AKS
-      - name: Verify AKS connection
-        run: |
-          kubectl cluster-info
-
-    
       # Step 4: Checkout Code
       - name: Checkout code
         uses: actions/checkout@v3
@@ -46,18 +32,13 @@ jobs:
           docker push ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/book_catalog:latest
           docker push ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/inventory_management:latest
 
-      # Step 8: Update Kubernetes deployment with the new Docker image
-      #   run: |
-      #     sed -i 's|{{DOCKER_IMAGE_BOOK_CATALOG}}|${{ secrets.AZURE_ACR_LOGIN_SERVER }}/book_catalog:latest|g' ./k8s/deployment-book-catalog.yaml
-      #     sed -i 's|{{DOCKER_IMAGE_INVENTORY_MANAGEMENT}}|${{ secrets.AZURE_ACR_LOGIN_SERVER }}/inventory_management:latest|g' ./k8s/deployment-inventory-management.yaml
-
       # Step 9: Deploy to Azure Kubernetes Service (AKS)
       - name: Apply Kubernetes deployment
-        run: |
-          kubectl apply -f ./scripts/kubernetes/deployment.yaml
-          kubectl rollout status deployment/book-catalog-deployment
-          kubectl rollout status deployment/inventory-management-deployment
-        env:
+      - uses: tale/kubectl-action@v1
+        with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+          kubectl-version: v1.24.2
+          run: |
+            kubectl apply -f ./scripts/kubernetes/deployment.yml
 
 

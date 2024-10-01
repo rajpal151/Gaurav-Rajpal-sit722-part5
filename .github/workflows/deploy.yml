@@ -39,8 +39,10 @@ jobs:
       # Step 6: Deploy to Azure Kubernetes Service (AKS)
       - name: Apply Kubernetes deployment
         run: |
-          kubectl apply -f ./k8s/deployment-book-catalog.yaml
-          kubectl apply -f ./k8s/deployment-inventory-management.yaml
+          kubectl apply -f ./scripts/kubernetes/deployment.yml
+          kubectl rollout status deployment/book-catalog-deployment
+          kubectl rollout status deployment/inventory-management-deployment
         env:
           KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
+
 

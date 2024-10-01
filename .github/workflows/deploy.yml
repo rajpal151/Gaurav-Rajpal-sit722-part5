@@ -10,11 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Log in to Azure
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.KUBE_CONFIG }}
+    
 
     # Step 2: Set the AKS context
       - name: Set AKS context

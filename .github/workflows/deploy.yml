@@ -31,8 +31,7 @@ jobs:
           docker push ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/book_catalog:latest
           docker push ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/inventory_management:latest
 
-      # # Step 5: Update Kubernetes deployment with the new Docker images
-      # - name: Update Kubernetes deployment
+      # # Step 5: Update Kubernetes deployment with the new Docker image
       #   run: |
       #     sed -i 's|{{DOCKER_IMAGE_BOOK_CATALOG}}|${{ secrets.AZURE_ACR_LOGIN_SERVER }}/book_catalog:latest|g' ./k8s/deployment-book-catalog.yaml
       #     sed -i 's|{{DOCKER_IMAGE_INVENTORY_MANAGEMENT}}|${{ secrets.AZURE_ACR_LOGIN_SERVER }}/inventory_management:latest|g' ./k8s/deployment-inventory-management.yaml

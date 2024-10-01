@@ -33,13 +33,10 @@ jobs:
           docker push rajpal151.azurecr.io/inventory_management:latest
 
       # Step 8: Set up kubectl and deploy to Azure Kubernetes Service (AKS)
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: v1.24.2
+      - name: Set up Kubeconfig
+        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
 
+      # Deploy the services
       - name: Deploy to AKS
-        env:
-          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
-          kubectl apply -f ./scripts/kubernetes/deployment.yml
+          kubectl apply -f deployment.yaml

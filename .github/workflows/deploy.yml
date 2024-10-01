@@ -26,7 +26,7 @@ jobs:
           docker build -t rajpal151.azurecr.io/book_catalog:latest ./book_catalog
           docker build -t rajpal151.azurecr.io/inventory_management:latest ./inventory_management
 
-      # Step 7: Push Docker images to Azure Container Registry (ACR)
+      # Step 9: Push Docker images to Azure Container Registry (ACR)
       - name: Push Docker images to ACR
         run: |
           docker push rajpal151.azurecr.io/book_catalog:latest

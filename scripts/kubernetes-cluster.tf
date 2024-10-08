@@ -1,7 +1,7 @@
 resource "azurerm_kubernetes_cluster" "example" {
-  name                = rajpal151
-  location            = eastus
-  resource_group_name = rg1
+  name                = "rajpal151"
+  location            = "eastus"
+  resource_group_name = "rg1"
   dns_prefix          = var.aks_name
 
   default_node_pool {

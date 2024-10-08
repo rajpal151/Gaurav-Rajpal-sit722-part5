@@ -37,11 +37,6 @@ jobs:
         working-directory: ./scripts  # Assuming .tf files are in ./scripts
         run: terraform init
 
-      # Step 5: Terraform Plan (optional but recommended)
-      - name: Terraform Plan
-        working-directory: ./scripts
-        run: terraform plan
-
       # Step 6: Apply Terraform (create/update infrastructure)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'

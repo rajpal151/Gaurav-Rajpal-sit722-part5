@@ -1,21 +1,21 @@
 
-variable "location" {
+variable "eastus" {
   description = "The Azure location for the resources"
   type        = string
   default     = "eastus"
 }
 
-variable "resource_group_name" {
+variable "rg1" {
   description = "The name of the Azure resource group"
   type        = string
 }
 
-variable "acr_name" {
+variable "rajpal151" {
   description = "The name of the Azure Container Registry"
   type        = string
 }
 
-variable "aks_name" {
+variable "rajpal151" {
   description = "The name of the Azure Kubernetes Cluster"
   type        = string
 }

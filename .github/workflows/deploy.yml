@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write  # Grant write permissions to id-token
+  contents: read   # Also ensure 'contents' permission is enabled
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,13 +18,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Azure Login
+      # Step 2: Azure Login using OIDC token
       - name: Azure Login
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
+          environment: 'azurecloud'
 
       # Step 3: Set up Terraform
       - name: Set up Terraform
@@ -30,21 +36,21 @@ jobs:
 
       # Step 4: Terraform Init
       - name: Terraform Init
+        working-directory: ./scripts
         run: terraform init
-        working-directory: ./scripts  # Adjust this path based on your directory structure
 
       # Step 5: Terraform Apply
       - name: Terraform Apply
-        run: terraform apply -auto-approve
         working-directory: ./scripts
+        run: terraform apply -auto-approve
 
       # Step 6: Get ACR name from Terraform output
       - name: Get ACR Name
         id: acr_info
+        working-directory: ./scripts
         run: |
           ACR_NAME=$(terraform output -raw acr_name)
           echo "::set-output name=acr_name::$ACR_NAME"
-        working-directory: ./scripts
 
       # Step 7: Enable ACR Admin
       - name: Enable ACR Admin

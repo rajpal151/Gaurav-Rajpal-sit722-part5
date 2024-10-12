@@ -47,9 +47,10 @@ jobs:
         id: acr_output
         working-directory: ./scripts
         run: |
-          echo "ACR_NAME=$(terraform output -raw acr_name)" >> $GITHUB_ENV
+          ACR_NAME=$(terraform output -raw acr_name)
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
 
-      # Step 7: Enable ACR Admin account using the captured ACR name
+      # Step 7: Enable ACR Admin account
       - name: Enable ACR Admin
         run: |
           az acr update --name "$ACR_NAME" --admin-enabled true

@@ -5,20 +5,16 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Log in to Azure using GitHub secrets
+      # Step 2: Azure Login
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -32,62 +28,25 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      # Step 4: Initialize Terraform
+      # Step 4: Terraform Init
       - name: Terraform Init
-        working-directory: ./scripts  # Assuming .tf files are in ./scripts
         run: terraform init
+        working-directory: ./scripts  # Adjust this path based on your directory structure
 
-      # Step 5: Apply Terraform (create/update infrastructure)
+      # Step 5: Terraform Apply
       - name: Terraform Apply
-        working-directory: ./scripts
         run: terraform apply -auto-approve
-
-      # Step 6: Get ACR name and login server from Terraform output
-      - name: Get ACR Login Server and Name from Terraform output
-        id: acr_info
         working-directory: ./scripts
+
+      # Step 6: Get ACR name from Terraform output
+      - name: Get ACR Name
+        id: acr_info
         run: |
           ACR_NAME=$(terraform output -raw acr_name)
-          ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server)
           echo "::set-output name=acr_name::$ACR_NAME"
-          echo "::set-output name=acr_login_server::$ACR_LOGIN_SERVER"
+        working-directory: ./scripts
 
-      # Step 7: Enable ACR Admin User (corrected command)
+      # Step 7: Enable ACR Admin
       - name: Enable ACR Admin
         run: |
           az acr update --name ${{ steps.acr_info.outputs.acr_name }} --admin-enabled true
-
-      # Step 8: Get ACR Admin Credentials
-      - name: Get ACR Admin Credentials
-        id: acr_admin_credentials
-        run: |
-          ACR_USERNAME=$(az acr credential show --name ${{ steps.acr_info.outputs.acr_name }} --query "username" --output tsv)
-          ACR_PASSWORD=$(az acr credential show --name ${{ steps.acr_info.outputs.acr_name }} --query "passwords[0].value" --output tsv)
-          echo "::set-output name=acr_username::$ACR_USERNAME"
-          echo "::set-output name=acr_password::$ACR_PASSWORD"
-
-      # Step 9: Log in to Azure Container Registry (ACR)
-      - name: Log in to Azure Container Registry (ACR)
-        run: |
-          echo "${{ steps.acr_admin_credentials.outputs.acr_password }}" | docker login ${{ steps.acr_info.outputs.acr_login_server }} -u ${{ steps.acr_admin_credentials.outputs.acr_username }} --password-stdin
-
-      # Step 10: Build and tag Docker images for the microservices
-      - name: Build and tag Docker images
-        run: |
-          docker build -t ${{ steps.acr_info.outputs.acr_login_server }}/book_catalog:latest ./book_catalog
-          docker build -t ${{ steps.acr_info.outputs.acr_login_server }}/inventory_management:latest ./inventory_management
-
-      # Step 11: Push Docker images to ACR
-      - name: Push Docker images to ACR
-        run: |
-          docker push ${{ steps.acr_info.outputs.acr_login_server }}/book_catalog:latest
-          docker push ${{ steps.acr_info.outputs.acr_login_server }}/inventory_management:latest
-
-      # Step 12: Get AKS credentials from Terraform output
-      - name: Get AKS credentials from Terraform output
-        run: |
-          az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw aks_cluster_name)
-
-      # Step 13: Deploy to AKS
-      - name: Deploy to AKS
-        run: kubectl apply -f deployment.yaml

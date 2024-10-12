@@ -47,10 +47,15 @@ jobs:
         id: get_acr_name
         working-directory: ./scripts
         run: |
-          echo "ACR_NAME=$(terraform output -raw acr_name 2>/dev/null)" >> $GITHUB_ENV
-          echo "ACR_NAME is set to $ACR_NAME" # Add this for debugging purposes
+          # Capture the output and print for debugging
+          ACR_NAME=$(terraform output -raw acr_name)
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+          echo "ACR_NAME is set to $ACR_NAME" # Debugging output
+          echo "Current environment variables:"
+          env  # List all environment variables for debugging
 
       # Step 7: Enable ACR Admin account
       - name: Enable ACR Admin
         run: |
+          echo "Enabling admin for ACR: ${{ env.ACR_NAME }}"
           az acr update --name "${{ env.ACR_NAME }}" --admin-enabled true

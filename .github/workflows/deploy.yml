@@ -6,15 +6,15 @@ on:
       - main
 
 permissions:
-  id-token: write  # Give write permissions to id-token
-  contents: read   # Read permission for the code
+  id-token: write  # Allow write permission for the ID token
+  contents: read   # Allow read access to repository contents
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -47,10 +47,9 @@ jobs:
         id: acr_output
         working-directory: ./scripts
         run: |
-          ACR_NAME=$(terraform output -raw acr_name)
-          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+          echo "ACR_NAME=$(terraform output -raw acr_name)" >> $GITHUB_ENV
 
       # Step 7: Enable ACR Admin account
       - name: Enable ACR Admin
         run: |
-          az acr update --name "$ACR_NAME" --admin-enabled true
+          az acr update --name "${{ env.ACR_NAME }}" --admin-enabled true

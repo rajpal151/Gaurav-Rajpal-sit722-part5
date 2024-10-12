@@ -52,7 +52,7 @@ jobs:
           echo "::set-output name=acr_name::$ACR_NAME"
           echo "::set-output name=acr_login_server::$ACR_LOGIN_SERVER"
 
-      # Step 7: Enable ACR Admin User (ensure it’s enabled)
+      # Step 7: Enable ACR Admin User (corrected command)
       - name: Enable ACR Admin
         run: |
           az acr update --name ${{ steps.acr_info.outputs.acr_name }} --admin-enabled true

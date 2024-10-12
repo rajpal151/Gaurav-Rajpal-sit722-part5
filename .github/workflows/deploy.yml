@@ -44,10 +44,11 @@ jobs:
 
       # Step 6: Capture the ACR name from Terraform output
       - name: Get ACR Name
-        id: acr_output
+        id: get_acr_name
         working-directory: ./scripts
         run: |
-          echo "ACR_NAME=$(terraform output -raw acr_name)" >> $GITHUB_ENV
+          echo "ACR_NAME=$(terraform output -raw acr_name 2>/dev/null)" >> $GITHUB_ENV
+          echo "ACR_NAME is set to $ACR_NAME" # Add this for debugging purposes
 
       # Step 7: Enable ACR Admin account
       - name: Enable ACR Admin
